@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://ai-agent-crypto.github.io/sitemap.xml

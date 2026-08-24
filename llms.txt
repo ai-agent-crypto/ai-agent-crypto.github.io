@@ -1,0 +1,26 @@
+# AI Agent Crypto — Autonomous On-Chain Agents Reference
+
+> What AI agents in crypto are — autonomous on-chain agents, agent frameworks and wallets for agents — plus common use-cases and the key risks. Educational and neutral, not affiliated with any project. Not financial advice.
+
+## Key Facts
+- AI agent (crypto): software using AI to make decisions and act autonomously on a blockchain (wallet, reads state, sends transactions)
+- Defining trait: autonomy within owner-set limits; decision layer usually off-chain, action layer on-chain
+- Agent frameworks: toolkits wiring a model, memory, tools and blockchain connectors; vary in maturity/audit status
+- Agent wallets: keys an agent can sign with, bounded by spending limits, allowlists, session keys or smart-contract accounts
+- Use-cases: automated trading/rebalancing, monitoring, DeFi automation, social bots, multi-step workflows
+- Risks: autonomous irreversible actions, key compromise, prompt injection/bad data, unaudited code, hype and scam tokens
+- Neutral educational overview — NOT affiliated with or endorsing any project or token
+
+## Internal Sections & App Navigation
+- [What is an AI agent in crypto?](#what)
+- [How on-chain agents work](#how)
+- [Agent frameworks](#frameworks)
+- [Wallets for agents](#wallets)
+- [Common use-cases](#usecases)
+- [Risks & limitations](#risks)
+- [Staying safe](#safety)
+- [FAQ](#faq)
+- [Explore the concept](dashboard/index.html)
+
+## Disclaimer
+Independent, educational page. Neutral overview, not affiliated with or endorsing any project or token. Not financial advice.
