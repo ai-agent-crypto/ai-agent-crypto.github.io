@@ -1,1410 +1,302 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>AI Agent Crypto — How Autonomous On-Chain Agents Work</title>
-<meta name="description" content="AI Agent Crypto explained: how autonomous agents hold wallets, read on-chain data, and execute trades and DeFi actions, the frameworks behind them, and the custody and exploit risks to understand first.">
-<link rel="canonical" href="https://ai-agent-crypto.github.io/">
-<meta property="og:type" content="article">
-<meta property="og:title" content="AI Agent Crypto">
-<meta property="og:url" content="https://ai-agent-crypto.github.io/">
-<meta property="og:image" content="https://ai-agent-crypto.github.io/og.png">
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="AI Agent Crypto">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AI Agent Crypto — How Autonomous On-Chain Agents Work</title>
+  <meta name="description" content="AI Agent Crypto explained: how autonomous agents hold wallets, read on-chain data, and execute trades and DeFi actions, the frameworks behind them, and the custody and exploit risks to understand first.">
+  <link rel="canonical" href="https://ai-agent-crypto.github.io/">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="AI Agent Crypto">
+  <meta property="og:description" content="AI Agent Crypto explained: how autonomous agents hold wallets, read on-chain data, and execute trades and DeFi actions, the frameworks behind them, and the custody and exploit risks to understand first.">
+  <meta property="og:url" content="https://ai-agent-crypto.github.io/">
+  <meta property="og:image" content="https://ai-agent-crypto.github.io/og.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="AI Agent Crypto">
+  <meta name="twitter:description" content="AI Agent Crypto explained: how autonomous agents hold wallets, read on-chain data, and execute trades and DeFi actions, the frameworks behind them, and the custody and exploit risks to understand first.">
+  <meta name="twitter:image" content="https://ai-agent-crypto.github.io/og.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap">
 <script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "WebSite", "@id": "https://ai-agent-crypto.github.io/#website", "url": "https://ai-agent-crypto.github.io/", "name": "AI Agent Crypto — How Autonomous On-Chain Agents Work"}, {"@type": "WebPage", "@id": "https://ai-agent-crypto.github.io/#webpage", "url": "https://ai-agent-crypto.github.io/", "name": "AI Agent Crypto — How Autonomous On-Chain Agents Work", "isPartOf": {"@id": "https://ai-agent-crypto.github.io/#website"}, "description": "AI Agent Crypto explained: how autonomous agents hold wallets, read on-chain data, and execute trades and DeFi actions, the frameworks behind them, and the custody and exploit risks to understand first.", "datePublished": "2026-10-11", "dateModified": "2026-10-11"}, {"@type": "SoftwareApplication", "name": "AI Agent Crypto", "applicationCategory": "FinanceApplication", "operatingSystem": "Web", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"}}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://ai-agent-crypto.github.io/"}, {"@type": "ListItem", "position": 2, "name": "Chains"}, {"@type": "ListItem", "position": 3, "name": "AI Agent Crypto"}]}, {"@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "What does AI Agent Crypto actually mean?", "acceptedAnswer": {"@type": "Answer", "text": "It describes software agents that pair an AI reasoning model with a blockchain wallet, so the agent can read on-chain data and sign transactions itself, within whatever permissions and funds it has been granted."}}, {"@type": "Question", "name": "Can an AI agent hold its own crypto wallet?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. Most deployments give the agent a dedicated wallet or a scoped session key rather than full control of a person's main wallet, which limits how much it can move or affect if something goes wrong."}}, {"@type": "Question", "name": "What frameworks are used to build on-chain agents?", "acceptedAnswer": {"@type": "Answer", "text": "Several open frameworks package memory, decision logic, and wallet or chain tools into a reusable runtime, letting a developer connect an agent to a new chain without rewriting its core reasoning loop each time."}}, {"@type": "Question", "name": "Are AI trading agents safe to fund?", "acceptedAnswer": {"@type": "Answer", "text": "Safety depends on how tightly the agent's keys and contract permissions are scoped. A session key with a spending limit and a whitelist of allowed contract functions contains a failure far better than a wallet with unrestricted access."}}, {"@type": "Question", "name": "What is a prompt-based exploit against a crypto agent?", "acceptedAnswer": {"@type": "Answer", "text": "It is an attempt to feed an agent manipulated data or crafted text so its reasoning model produces a harmful action, such as approving a bad trade or sending funds to the wrong address, without the agent's owner intending it."}}, {"@type": "Question", "name": "Why do some crypto agents have their own token?", "acceptedAnswer": {"@type": "Answer", "text": "Some projects issue a token to fund the agent's operating costs or to build a community around it. Token price and agent usefulness are separate signals, and checking an aggregator for real wallet activity is more informative than the token chart alone."}}, {"@type": "Question", "name": "How do I check what a crypto agent has actually done?", "acceptedAnswer": {"@type": "Answer", "text": "Because every action is a signed transaction, you can look up the agent's wallet address on a public block explorer and review its full transaction history, rather than relying on a dashboard the project controls."}}]}]}</script>
-<style>
-:root{--bg:#0B0D12;--surface:#151922;--text:#EAEEF6;--muted:#8A93A3;--accent:#7C9CFF;--accent-ink:#0A0F20;--radius:14px;--display:"Space Grotesk";--body:"Inter"}
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-}
-html {
-  scroll-behavior: smooth;
-  scroll-padding-top: 2rem;
-  background: var(--bg);
-  -webkit-text-size-adjust: 100%;
-}
-body {
-  margin: 0;
-  min-width: 280px;
-  color: var(--text);
-  background: var(--bg);
-  font-family: var(--body);
-  font-size: 1rem;
-  font-weight: 400;
-  line-height: 1.7;
-  -webkit-font-smoothing: antialiased;
-  overflow-wrap: break-word;
-}
-::selection {
-  color: var(--accent-ink);
-  background: var(--accent);
-}
-a {
-  color: var(--accent);
-  text-decoration-thickness: .075em;
-  text-underline-offset: .2em;
-  transition: color .18s ease, background .18s ease, border-color .18s ease;
-}
-a:hover {
-  color: var(--text);
-}
-a:focus-visible,
-summary:focus-visible,
-[tabindex]:focus-visible {
-  outline: 3px solid var(--accent);
-  outline-offset: 5px;
-  border-radius: calc(var(--radius) * .35);
-}
-img,
-svg,
-video {
-  max-width: 100%;
-  vertical-align: middle;
-}
-img,
-video {
-  height: auto;
-}
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-  margin-top: 0;
-  color: var(--text);
-  font-family: var(--display);
-  font-weight: 650;
-  line-height: 1.2;
-  text-wrap: balance;
-}
-p,
-ul,
-ol,
-dl,
-figure,
-blockquote {
-  margin-top: 0;
-}
-[hidden] {
-  display: none !important;
-}
-.c441738 {
-  width: min(100% - 6rem, 1240px);
-  margin-inline: auto;
-}
-.c111249 {
-  position: absolute;
-  z-index: 20;
-  top: 1rem;
-  left: 1rem;
-  padding: .75rem 1.15rem;
-  transform: translateY(-180%);
-  border-radius: var(--radius);
-  color: var(--accent-ink);
-  background: var(--accent);
-  font-weight: 600;
-}
-.c111249:focus {
-  transform: translateY(0);
-}
-.cb43920 {
-  position: relative;
-  z-index: 1;
-  border-bottom: 1px solid color-mix(in srgb, var(--text) 10%, var(--bg));
-  background: var(--bg);
-}
-.cc76084 {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 2rem;
-  min-height: 88px;
-  padding-block: 1rem;
-}
-.c4d198e {
-  display: inline-flex;
-  align-items: center;
-  gap: .75rem;
-  color: var(--text);
-  font-family: var(--display);
-  font-size: 1.2rem;
-  font-weight: 650;
-  letter-spacing: -.04em;
-}
-.c6a7f26 {
-  display: grid;
-  place-items: center;
-  width: 34px;
-  height: 34px;
-  border: 1px solid color-mix(in srgb, var(--accent) 30%, var(--surface));
-  border-radius: calc(var(--radius) * .55);
-  color: var(--accent);
-  background: color-mix(in srgb, var(--accent) 8%, var(--surface));
-}
-.c6a7f26 svg {
-  width: 19px;
-  height: 19px;
-  fill: none;
-  stroke: var(--accent);
-  stroke-width: 1.6;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-}
-.c928ec9 {
-  display: inline-flex;
-  align-items: center;
-  gap: .8rem;
-  padding: .5rem 0;
-  color: var(--text);
-  font-size: .9rem;
-  font-weight: 600;
-  text-decoration: none;
-}
-.c928ec9:hover {
-  color: var(--accent);
-}
-.c106a29 {
-  position: relative;
-  isolation: isolate;
-  overflow: hidden;
-  border-bottom: 1px solid color-mix(in srgb, var(--accent) 15%, var(--bg));
-  background:
-    radial-gradient(ellipse at 95% 12%, color-mix(in srgb, var(--accent) 14%, transparent), color-mix(in srgb, var(--accent) 0%, transparent) 62%),
-    linear-gradient(130deg, var(--surface), color-mix(in srgb, var(--accent) 5%, var(--bg)) 70%, var(--bg));
-}
-.c106a29::after {
-  content: "";
-  position: absolute;
-  z-index: -1;
-  width: 520px;
-  height: 520px;
-  right: -240px;
-  bottom: -310px;
-  border: 1px solid color-mix(in srgb, var(--accent) 15%, transparent);
-  border-radius: 50%;
-  box-shadow: 0 0 0 65px color-mix(in srgb, var(--accent) 3%, transparent), 0 0 0 130px color-mix(in srgb, var(--accent) 2%, transparent);
-  pointer-events: none;
-}
-.cfd9d10 {
-  padding-block: 1.2rem 3rem;
-}
-.c353104 {
-  margin-bottom: 1.6rem;
-  color: var(--muted);
-  font-size: .8rem;
-  line-height: 1.6;
-}
-.cbcd68a {
-  display: inline;
-  color: var(--muted);
-  font-family: var(--body);
-  font-size: inherit;
-  text-decoration: none;
-}
-.cbcd68a a,
-a.cbcd68a {
-  color: var(--muted);
-  text-decoration: none;
-}
-.cbcd68a a:hover,
-a.cbcd68a:hover {
-  color: var(--accent);
-  text-decoration: underline;
-}
-.c353104 ol,
-.c353104 ul,
-ol.cbcd68a,
-ul.cbcd68a {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: .45rem .7rem;
-  padding: 0;
-  margin: 0;
-  list-style: none;
-}
-.c353104 li {
-  display: inline;
-}
-.c353104 [aria-current="page"] {
-  color: var(--text);
-}
-.cbaecd3 {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: .8rem;
-  margin-bottom: 1.35rem;
-  color: var(--accent);
-  font-size: .875rem;
-  font-weight: 600;
-}
-.cd1c67a {
-  padding-block: .3rem;
-}
-.ce6df1a {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 36px;
-  max-width: 180px;
-  padding: .4rem .65rem;
-  border: 1px solid color-mix(in srgb, var(--text) 9%, var(--surface));
-  border-radius: calc(var(--radius) * .6);
-  background: var(--surface);
-  box-shadow: 0 3px 10px color-mix(in srgb, var(--text) 4%, transparent);
-  color: var(--text);
-  font-size: .8rem;
-  line-height: 1;
-}
-.ce6df1a:empty {
-  display: none;
-}
-.ce6df1a img,
-.ce6df1a svg {
-  display: block;
-  width: auto;
-  max-width: 148px;
-  height: 24px;
-  object-fit: contain;
-}
-.c106a29 h1 {
-  max-width: 1050px;
-  margin: 0 0 1.5rem;
-  font-family: var(--display);
-  font-size: clamp(2.7rem, 5.7vw, 5.1rem);
-  font-weight: 600;
-  line-height: 1.06;
-  letter-spacing: -.055em;
-  overflow-wrap: anywhere;
-}
-.c106a29 h1 em {
-  color: var(--accent);
-  font-style: normal;
-}
-.c106a29 h1 a {
-  color: inherit;
-}
-.cadbf20 {
-  max-width: 760px;
-  margin: 0 0 2.1rem;
-  color: var(--muted);
-  font-size: clamp(1.05rem, 1.6vw, 1.22rem);
-  line-height: 1.75;
-  text-wrap: pretty;
-}
-.c0ce59c {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 1.7rem;
-  min-height: 54px;
-  padding: .85rem 1.35rem;
-  border: 1px solid var(--accent);
-  border-radius: var(--radius);
-  color: var(--accent-ink);
-  background: var(--accent);
-  box-shadow: 0 6px 18px color-mix(in srgb, var(--accent) 18%, transparent);
-  font-family: var(--body);
-  font-size: .95rem;
-  font-weight: 650;
-  line-height: 1.4;
-  text-decoration: none;
-  transition: background .2s ease, box-shadow .2s ease, transform .2s ease;
-}
-.c0ce59c:hover {
-  color: var(--accent-ink);
-  background: color-mix(in srgb, var(--accent) 92%, var(--text));
-  box-shadow: 0 9px 24px color-mix(in srgb, var(--accent) 24%, transparent);
-  transform: translateY(-2px);
-}
-.c86dea4 {
-  font-family: var(--body);
-  font-size: 1.25em;
-  line-height: 1;
-}
-.c97cec6 {
-  display: grid;
-  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.82fr);
-  gap: clamp(2rem, 4vw, 3.75rem);
-  align-items: start;
-}
-.c46b379 {
-  min-width: 0;
-}
-.c46b379 .cadbf20 {
-  margin-bottom: 1.6rem;
-}
-.c9c9ed8 {
-  position: relative;
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  padding: clamp(1.15rem, 2vw, 1.65rem);
-  border: 1px solid color-mix(in srgb, var(--accent) 20%, var(--surface));
-  border-radius: calc(var(--radius) * 1.4);
-  background: linear-gradient(158deg, color-mix(in srgb, var(--accent) 8%, var(--surface)), var(--surface) 46%);
-  box-shadow: 0 22px 60px -26px color-mix(in srgb, var(--text) 24%, transparent), 0 3px 12px -6px color-mix(in srgb, var(--accent) 14%, transparent);
-}
-.c9c9ed8::before {
-  content: "";
-  position: absolute;
-  inset: -1px 14% auto;
-  height: 2px;
-  background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--accent) 60%, transparent), transparent);
-}
-.c0de3af {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 0.6rem 1rem;
-  margin-bottom: 1rem;
-}
-.c0de3af h2 {
-  margin: 0;
-  font-family: var(--display);
-  font-size: 1.15rem;
-  font-weight: 650;
-  letter-spacing: -0.03em;
-}
-.ca23d4f {
-  display: inline-flex;
-  align-items: center;
-  max-width: 100%;
-  padding: 0.28rem 0.62rem;
-  border: 1px solid color-mix(in srgb, var(--accent) 18%, transparent);
-  border-radius: 999px;
-  background: color-mix(in srgb, var(--accent) 8%, var(--surface));
-  color: var(--accent);
-  font-size: 0.72rem;
-  font-weight: 600;
-  overflow-wrap: anywhere;
-}
-.c3027e9 .c5cb9e3 {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 0.85rem;
-}
-.c3027e9 .c5cb9e3 th,
-.c3027e9 .c5cb9e3 td {
-  padding: 0.58rem 0;
-  border-bottom: 1px solid color-mix(in srgb, var(--text) 10%, transparent);
-  vertical-align: top;
-  text-align: left;
-  overflow-wrap: anywhere;
-}
-.c3027e9 .c5cb9e3 tr:last-child th,
-.c3027e9 .c5cb9e3 tr:last-child td {
-  border-bottom: 0;
-}
-.c3027e9 .c5cb9e3 th {
-  width: 38%;
-  padding-right: 0.9rem;
-  color: var(--muted);
-  font-weight: 500;
-}
-.c3027e9 .c5cb9e3 td {
-  color: var(--text);
-  font-weight: 550;
-}
-.c21137d {
-  margin-top: 1.15rem;
-  width: 100%;
-}
-@media (max-width: 920px) {
-  .c97cec6 {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 2rem;
-  }
-  .c9c9ed8 {
-    width: 100%;
-    max-width: 560px;
-  }
-}
-.summary-strip {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 1rem;
-  margin-block: 1.5rem 4.5rem;
-}
-.summary-item {
-  min-width: 0;
-  padding: 1.2rem 1.35rem;
-  border: 1px solid color-mix(in srgb, var(--text) 9%, var(--surface));
-  border-radius: var(--radius);
-  background: var(--surface);
-  box-shadow: 0 3px 12px color-mix(in srgb, var(--text) 3%, transparent);
-}
-.summary-item strong {
-  display: block;
-  margin-bottom: .2rem;
-  color: var(--text);
-  font-family: var(--display);
-  font-size: 1rem;
-  font-weight: 600;
-  line-height: 1.4;
-  letter-spacing: -.02em;
-}
-.summary-item span {
-  display: block;
-  color: var(--muted);
-  font-size: .8rem;
-  line-height: 1.5;
-}
-.c93b9fd {
-  display: grid;
-  grid-template-columns: 235px minmax(0, 1fr);
-  align-items: start;
-  gap: clamp(2.5rem, 5vw, 5rem);
-  padding-bottom: 4.5rem;
-}
-.c8ad72d {
-  position: sticky;
-  top: 2rem;
-  min-width: 0;
-  max-height: calc(100dvh - 4rem);
-  overflow-y: auto;
-  overscroll-behavior: contain;
-  scrollbar-width: thin;
-  scrollbar-color: color-mix(in srgb, var(--muted) 35%, var(--surface)) var(--surface);
-  padding: .3rem .75rem 1rem .25rem;
-}
-.cf2c9d6 {
-  margin: 0 0 1.1rem;
-  color: var(--text);
-  font-family: var(--display);
-  font-size: .95rem;
-  font-weight: 650;
-  letter-spacing: -.02em;
-}
-.c497ac5 {
-  display: grid;
-  gap: .3rem;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-.c497ac5 li {
-  min-width: 0;
-  margin: 0;
-  padding: 0;
-}
-.c01ad8e {
-  position: relative;
-  display: block;
-  padding: .7rem .9rem .7rem 1.1rem;
-  border-inline-start: 2px solid color-mix(in srgb, var(--muted) 18%, var(--bg));
-  border-radius: 0 calc(var(--radius) * .55) calc(var(--radius) * .55) 0;
-  color: var(--muted);
-  font-family: var(--body);
-  font-size: .85rem;
-  font-weight: 450;
-  line-height: 1.5;
-  text-decoration: none;
-  overflow-wrap: anywhere;
-}
-.c01ad8e:hover {
-  border-inline-start-color: color-mix(in srgb, var(--accent) 45%, var(--bg));
-  color: var(--text);
-  background: color-mix(in srgb, var(--accent) 5%, var(--bg));
-}
-.c01ad8e[aria-current="location"] {
-  border-inline-start-color: var(--accent);
-  color: var(--accent);
-  background: color-mix(in srgb, var(--accent) 9%, var(--bg));
-  font-weight: 650;
-}
-.c7bf144 {
-  margin: 1.65rem 0 0;
-  padding: 1.2rem 0 0;
-  border-top: 1px solid color-mix(in srgb, var(--text) 10%, var(--bg));
-  color: var(--muted);
-  font-size: .78rem;
-  line-height: 1.65;
-}
-.c5d57e2 {
-  min-width: 0;
-}
-.facts-panel {
-  padding: clamp(1.3rem, 3vw, 2.3rem);
-  margin-bottom: 3.75rem;
-  border: 1px solid color-mix(in srgb, var(--accent) 18%, var(--surface));
-  border-top: 3px solid var(--accent);
-  border-radius: var(--radius);
-  background: var(--surface);
-  box-shadow: 0 10px 35px color-mix(in srgb, var(--text) 5%, transparent);
-  scroll-margin-top: 2rem;
-}
-.panel-heading {
-  display: flex;
-  align-items: baseline;
-  flex-wrap: wrap;
-  gap: .5rem 1.5rem;
-  justify-content: space-between;
-  margin-bottom: 1.4rem;
-}
-.panel-heading h2 {
-  margin: 0;
-  font-size: clamp(1.45rem, 2.3vw, 1.85rem);
-  letter-spacing: -.04em;
-}
-.panel-heading p {
-  margin: 0;
-  color: var(--muted);
-  font-size: .8rem;
-}
-.facts-content {
-  min-width: 0;
-  overflow-x: auto;
-  scrollbar-width: thin;
-  scrollbar-color: var(--muted) var(--surface);
-}
-.c5cb9e3 {
-  width: 100%;
-  border-collapse: collapse;
-  color: var(--text);
-  font-family: var(--body);
-  font-size: .925rem;
-  line-height: 1.6;
-  text-align: left;
-}
-.c5cb9e3 caption {
-  padding: 0 0 1rem;
-  color: var(--muted);
-  font-size: .85rem;
-  text-align: left;
-}
-.c5cb9e3 th,
-.c5cb9e3 td {
-  padding: 1.05rem .85rem;
-  border-bottom: 1px solid color-mix(in srgb, var(--text) 9%, var(--surface));
-  vertical-align: top;
-  overflow-wrap: anywhere;
-}
-.c5cb9e3 th {
-  width: 37%;
-  color: var(--muted);
-  font-weight: 500;
-}
-.c5cb9e3 thead th {
-  color: var(--text);
-  background: color-mix(in srgb, var(--accent) 5%, var(--surface));
-  font-weight: 650;
-}
-.c5cb9e3 td {
-  font-weight: 550;
-}
-.c5cb9e3 tr > :first-child {
-  padding-left: 0;
-}
-.c5cb9e3 tr > :last-child {
-  padding-right: 0;
-}
-.c5cb9e3 tbody:last-child tr:last-child > *,
-.c5cb9e3 > tr:last-child > * {
-  border-bottom: 0;
-}
-.c5cb9e3 td p:last-child,
-.c5cb9e3 th p:last-child {
-  margin-bottom: 0;
-}
-.c5a9774 {
-  min-width: 0;
-}
-.c26a3b9 {
-  min-width: 0;
-  margin: 0 0 3.4rem;
-  scroll-margin-top: 2rem;
-}
-.c26a3b9 + .c26a3b9 {
-  padding-top: 2.8rem;
-  border-top: 1px solid color-mix(in srgb, var(--text) 11%, var(--bg));
-}
-.c2321c5 {
-  margin: 0 0 1.25rem;
-  color: var(--text);
-  font-family: var(--display);
-  font-size: clamp(1.65rem, 2.8vw, 2.35rem);
-  font-weight: 600;
-  line-height: 1.22;
-  letter-spacing: -.045em;
-}
-.c6c2b4b {
-  color: var(--text);
-  font-family: var(--body);
-  font-size: 1rem;
-  line-height: 1.85;
-  overflow-wrap: anywhere;
-}
-.c6c2b4b > :last-child {
-  margin-bottom: 0;
-}
-.c6c2b4b p {
-  margin: 0 0 1.3rem;
-  text-wrap: pretty;
-}
-.c6c2b4b h3 {
-  margin: 2rem 0 .9rem;
-  font-size: clamp(1.2rem, 2vw, 1.45rem);
-  font-weight: 600;
-  line-height: 1.35;
-  letter-spacing: -.025em;
-}
-.c6c2b4b h4,
-.c6c2b4b h5,
-.c6c2b4b h6 {
-  margin: 1.6rem 0 .75rem;
-  font-size: 1.075rem;
-  line-height: 1.4;
-}
-.c6c2b4b h3:first-child,
-.c6c2b4b h4:first-child {
-  margin-top: 0;
-}
-.c6c2b4b strong,
-.c71518d strong {
-  color: var(--text);
-  font-weight: 650;
-}
-.c6c2b4b ul,
-.c6c2b4b ol,
-.c71518d ul,
-.c71518d ol {
-  margin: 1.2rem 0 1.6rem;
-  padding-left: 1.5rem;
-}
-.c6c2b4b li,
-.c71518d li {
-  padding-left: .4rem;
-  margin-block: .55rem;
-}
-.c6c2b4b li::marker,
-.c71518d li::marker {
-  color: var(--accent);
-  font-weight: 600;
-}
-.c6c2b4b li > ul,
-.c6c2b4b li > ol {
-  margin-block: .5rem;
-}
-.c6c2b4b li p {
-  margin-bottom: .6rem;
-}
-.c6c2b4b blockquote {
-  margin: 1.8rem 0;
-  padding: 1.3rem 1.5rem;
-  border-inline-start: 3px solid var(--accent);
-  border-radius: 0 var(--radius) var(--radius) 0;
-  background: color-mix(in srgb, var(--accent) 6%, var(--surface));
-  color: var(--text);
-  font-size: 1.05rem;
-}
-.c6c2b4b blockquote > :last-child {
-  margin-bottom: 0;
-}
-.c6c2b4b blockquote cite {
-  display: block;
-  margin-top: .9rem;
-  color: var(--muted);
-  font-size: .85rem;
-  font-style: normal;
-}
-.c6c2b4b table {
-  display: block;
-  width: 100%;
-  max-width: 100%;
-  margin: 1.7rem 0;
-  overflow-x: auto;
-  border: 1px solid color-mix(in srgb, var(--text) 12%, var(--surface));
-  border-radius: var(--radius);
-  border-spacing: 0;
-  background: var(--surface);
-  font-family: var(--body);
-  font-size: .875rem;
-  line-height: 1.65;
-  text-align: left;
-  scrollbar-width: thin;
-  scrollbar-color: var(--muted) var(--surface);
-}
-.c6c2b4b table caption {
-  padding: .9rem 1rem;
-  color: var(--muted);
-  font-size: .82rem;
-  text-align: left;
-}
-.c6c2b4b th,
-.c6c2b4b td {
-  min-width: 125px;
-  padding: 1rem 1.15rem;
-  border-bottom: 1px solid color-mix(in srgb, var(--text) 9%, var(--surface));
-  vertical-align: top;
-}
-.c6c2b4b th {
-  color: var(--text);
-  background: color-mix(in srgb, var(--accent) 7%, var(--surface));
-  font-weight: 650;
-}
-.c6c2b4b tbody tr:nth-child(even) {
-  background: color-mix(in srgb, var(--text) 2%, var(--surface));
-}
-.c6c2b4b tbody:last-child tr:last-child > * {
-  border-bottom: 0;
-}
-.c6c2b4b td > :last-child,
-.c6c2b4b th > :last-child {
-  margin-bottom: 0;
-}
-.c6c2b4b figure {
-  margin: 1.8rem 0;
-}
-.c6c2b4b figure img {
-  display: block;
-  border-radius: var(--radius);
-}
-.c6c2b4b figcaption {
-  margin-top: .7rem;
-  color: var(--muted);
-  font-size: .8rem;
-  line-height: 1.6;
-}
-.c6c2b4b code,
-.c71518d code {
-  padding: .1em .35em;
-  border-radius: calc(var(--radius) * .25);
-  background: color-mix(in srgb, var(--accent) 7%, var(--surface));
-  color: var(--text);
-  font-family: var(--body);
-  font-size: .9em;
-}
-.c6c2b4b pre {
-  overflow-x: auto;
-  padding: 1.2rem;
-  border: 1px solid color-mix(in srgb, var(--text) 10%, var(--surface));
-  border-radius: var(--radius);
-  background: var(--surface);
-  color: var(--text);
-  font-family: var(--body);
-  font-size: .875rem;
-  line-height: 1.7;
-}
-.c6c2b4b pre code {
-  padding: 0;
-  background: var(--surface);
-}
-.c6c2b4b hr {
-  margin: 2rem 0;
-  border: 0;
-  border-top: 1px solid color-mix(in srgb, var(--text) 12%, var(--bg));
-}
-.c6c2b4b dt {
-  margin-top: 1.1rem;
-  color: var(--text);
-  font-weight: 650;
-}
-.c6c2b4b dd {
-  margin: .4rem 0 1rem;
-  color: var(--muted);
-}
-.c1faf9c {
-  padding-top: 2.75rem;
-  border-top: 1px solid color-mix(in srgb, var(--text) 11%, var(--bg));
-  scroll-margin-top: 2rem;
-}
-.c1faf9c > .c2321c5 {
-  margin-bottom: 1.65rem;
-}
-.c4ce600 {
-  margin: 0 0 .8rem;
-  border: 1px solid color-mix(in srgb, var(--text) 11%, var(--surface));
-  border-radius: var(--radius);
-  background: var(--surface);
-  box-shadow: 0 3px 12px color-mix(in srgb, var(--text) 3%, transparent);
-  overflow: clip;
-  transition: border-color .2s ease, box-shadow .2s ease;
-}
-.c4ce600:hover {
-  border-color: color-mix(in srgb, var(--accent) 35%, var(--surface));
-}
-.c4ce600[open] {
-  border-color: color-mix(in srgb, var(--accent) 35%, var(--surface));
-  box-shadow: 0 6px 20px color-mix(in srgb, var(--text) 4%, transparent);
-}
-.c230e1e {
-  position: relative;
-  display: block;
-  padding: 1.35rem 3.8rem 1.35rem 1.4rem;
-  color: var(--text);
-  font-family: var(--display);
-  font-size: 1.025rem;
-  font-weight: 600;
-  line-height: 1.5;
-  letter-spacing: -.015em;
-  list-style: none;
-  cursor: pointer;
-}
-.c230e1e::-webkit-details-marker {
-  display: none;
-}
-.c230e1e::after {
-  content: "+";
-  position: absolute;
-  top: 1.3rem;
-  right: 1.35rem;
-  display: grid;
-  place-items: center;
-  width: 25px;
-  height: 25px;
-  border-radius: 50%;
-  background: color-mix(in srgb, var(--accent) 9%, var(--surface));
-  color: var(--accent);
-  font-family: var(--body);
-  font-size: 1.15rem;
-  font-weight: 400;
-  line-height: 1;
-}
-.c4ce600[open] > .c230e1e::after {
-  content: "−";
-}
-.c4ce600 > .c230e1e:focus-visible {
-  outline-offset: -5px;
-}
-.c71518d {
-  padding: 0 1.4rem 1.45rem;
-  color: var(--muted);
-  font-family: var(--body);
-  font-size: .95rem;
-  line-height: 1.8;
-}
-.c71518d > :first-child {
-  margin-top: 0;
-}
-.c71518d > :last-child {
-  margin-bottom: 0;
-}
-.c71518d p {
-  margin-bottom: 1rem;
-}
-.cd05912 {
-  padding-block: 3rem 3.6rem;
-  border-top: 1px solid color-mix(in srgb, var(--text) 10%, var(--bg));
-  background: color-mix(in srgb, var(--surface) 70%, var(--bg));
-  scroll-margin-top: 2rem;
-}
-.c4df3dd {
-  display: grid;
-  grid-template-columns: 235px minmax(0, 1fr);
-  gap: clamp(2.5rem, 5vw, 5rem);
-}
-.c3d091e h2 {
-  margin-bottom: .7rem;
-  font-size: 1.4rem;
-  letter-spacing: -.035em;
-}
-.c3d091e p {
-  margin: 0;
-  color: var(--muted);
-  font-size: .85rem;
-  line-height: 1.7;
-}
-.cc74405 {
-  min-width: 0;
-}
-.cc77df5 {
-  display: grid;
-  gap: .7rem;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  font-family: var(--body);
-}
-.c54c63d {
-  display: block;
-  min-width: 0;
-  padding: 1rem 1.2rem;
-  border: 1px solid color-mix(in srgb, var(--text) 9%, var(--surface));
-  border-radius: calc(var(--radius) * .75);
-  background: var(--surface);
-  color: var(--muted);
-  font-family: var(--body);
-  font-size: .875rem;
-  line-height: 1.7;
-  overflow-wrap: anywhere;
-}
-.c54c63d a,
-a.c54c63d {
-  color: var(--text);
-  text-decoration-color: color-mix(in srgb, var(--accent) 35%, var(--surface));
-  text-underline-offset: .25em;
-}
-.c54c63d a:hover,
-a.c54c63d:hover {
-  color: var(--accent);
-  text-decoration-color: var(--accent);
-}
-.c54c63d p {
-  margin: .4rem 0 0;
-}
-.c54c63d small {
-  color: var(--muted);
-  font-size: .8rem;
-}
-.c54bca3 {
-  border-top: 1px solid color-mix(in srgb, var(--text) 10%, var(--bg));
-  background: var(--bg);
-}
-.c9c5cd6 {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 1rem 2rem;
-  min-height: 100px;
-  padding-block: 1.5rem;
-}
-.c87fa40 {
-  color: var(--text);
-  font-family: var(--display);
-  font-size: 1rem;
-  font-weight: 600;
-  letter-spacing: -.025em;
-}
-.cdaab44 {
-  margin: 0;
-  color: var(--muted);
-  font-size: .8rem;
-}
-.cdaab44 span {
-  color: var(--text);
-}
-@media (min-width: 1500px) {
-  .cfd9d10 {
-    padding-bottom: 6rem;
-  }
-  .c353104 {
-    margin-bottom: 4.5rem;
-  }
-  .c93b9fd {
-    gap: 5.5rem;
-  }
-  .c4df3dd {
-    gap: 5.5rem;
-  }
-}
-@media (max-width: 1050px) {
-  .c441738 {
-    width: calc(100% - 3rem);
-  }
-  .c93b9fd,
-  .c4df3dd {
-    grid-template-columns: 190px minmax(0, 1fr);
-    gap: 2.25rem;
-  }
-  .summary-strip {
-    gap: .75rem;
-  }
-  .summary-item {
-    padding: 1rem;
-  }
-  .c01ad8e {
-    font-size: .8rem;
-  }
-}
-@media (max-width: 760px) {
-  html {
-    scroll-padding-top: 1rem;
-  }
-  .cc76084 {
-    min-height: 72px;
-  }
-  .cfd9d10 {
-    padding-block: 1.25rem 3.25rem;
-  }
-  .c353104 {
-    margin-bottom: 2.6rem;
-  }
-  .c106a29 h1 {
-    max-width: 100%;
-    font-size: clamp(2.45rem, 7.4vw, 3.6rem);
-    letter-spacing: -.045em;
-  }
-  .cadbf20 {
-    font-size: 1.05rem;
-  }
-  .summary-strip {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    margin-block: 1.2rem 2.5rem;
-  }
-  .c93b9fd {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 2.3rem;
-    padding-bottom: 3rem;
-  }
-  .c8ad72d {
-    position: static;
-    max-height: none;
-    padding: 1.2rem;
-    border: 1px solid color-mix(in srgb, var(--text) 10%, var(--surface));
-    border-radius: var(--radius);
-    background: var(--surface);
-  }
-  .cf2c9d6 {
-    margin-bottom: .8rem;
-  }
-  .c497ac5 {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: .4rem .8rem;
-  }
-  .c01ad8e {
-    height: 100%;
-    padding-block: .7rem;
-    font-size: .825rem;
-  }
-  .c7bf144 {
-    display: none;
-  }
-  .facts-panel {
-    margin-bottom: 2.5rem;
-  }
-  .c26a3b9 {
-    margin-bottom: 2.6rem;
-  }
-  .c26a3b9 + .c26a3b9 {
-    padding-top: 2.2rem;
-  }
-  .c4df3dd {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 1.5rem;
-  }
-  .cd05912 {
-    padding-block: 2.5rem;
-  }
-  .c26a3b9,
-  .facts-panel,
-  .c1faf9c,
-  .cd05912 {
-    scroll-margin-top: 1rem;
-  }
-}
-@media (max-width: 440px) {
-  .c441738 {
-    width: calc(100% - 2rem);
-  }
-  .cc76084 {
-    gap: 1rem;
-  }
-  .c4d198e {
-    gap: .5rem;
-    font-size: 1.05rem;
-  }
-  .c928ec9 {
-    gap: .45rem;
-    font-size: .8rem;
-  }
-  .cbaecd3 {
-    gap: .65rem;
-    margin-bottom: 1.1rem;
-  }
-  .c106a29 h1 {
-    font-size: 2.5rem;
-  }
-  .c0ce59c {
-    width: 100%;
-    justify-content: space-between;
-  }
-  .summary-item {
-    padding: .9rem;
-  }
-  .summary-item strong {
-    font-size: .9rem;
-  }
-  .summary-item span {
-    font-size: .75rem;
-  }
-  .c497ac5 {
-    grid-template-columns: minmax(0, 1fr);
-  }
-  .facts-panel {
-    padding: 1.15rem;
-  }
-  .c5cb9e3 {
-    font-size: .85rem;
-  }
-  .c5cb9e3 th,
-  .c5cb9e3 td {
-    padding-block: .9rem;
-    padding-inline: .5rem;
-  }
-  .c6c2b4b {
-    font-size: .95rem;
-    line-height: 1.8;
-  }
-  .c6c2b4b blockquote {
-    padding: 1rem 1.1rem;
-  }
-  .c230e1e {
-    padding: 1.1rem 3rem 1.1rem 1.1rem;
-    font-size: .95rem;
-  }
-  .c230e1e::after {
-    top: 1.1rem;
-    right: .9rem;
-  }
-  .c71518d {
-    padding: 0 1.1rem 1.2rem;
-    font-size: .9rem;
-  }
-  .c9c5cd6 {
-    align-items: flex-start;
-    flex-direction: column;
-    gap: .6rem;
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
-  }
-  *,
-  *::before,
-  *::after {
-    transition: none !important;
-  }
-  .c0ce59c:hover {
-    transform: none;
-  }
-}
-@media print {
-  body {
-    background: var(--surface);
-    font-size: 10pt;
-  }
-  .c441738 {
-    width: 100%;
-  }
-  .cb43920,
-  .c111249,
-  .c0ce59c,
-  .c8ad72d,
-  .c106a29::after {
-    display: none;
-  }
-  .c106a29 {
-    background: var(--surface);
-  }
-  .cfd9d10 {
-    padding-block: 1rem 2rem;
-  }
-  .c353104 {
-    margin-bottom: 1.5rem;
-  }
-  .c106a29 h1 {
-    font-size: 32pt;
-  }
-  .summary-strip {
-    margin-bottom: 2rem;
-  }
-  .c93b9fd,
-  .c4df3dd {
-    display: block;
-  }
-  .facts-panel,
-  .summary-item,
-  .c4ce600 {
-    box-shadow: none;
-  }
-  .c2321c5,
-  .c6c2b4b h3 {
-    break-after: avoid;
-  }
-  .c4ce600,
-  .c54c63d,
-  .c6c2b4b tr {
-    break-inside: avoid;
-  }
-  .c3d091e {
-    margin-bottom: 1rem;
-  }
-}
-</style>
+  <style>
+    :root{--bg:#0B0D12;--surface:#151922;--text:#EAEEF6;--muted:#8A93A3;--accent:#7C9CFF;--accent-ink:#0A0F20;--radius:14px;--display:"Space Grotesk";--body:"Inter"}
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; scroll-padding-top: 2rem; }
+    body { margin: 0; background: var(--bg); color: var(--text); font: 400 1rem/1.7 var(--body); -webkit-font-smoothing: antialiased; }
+    a { color: var(--accent); text-underline-offset: .22em; }
+    a:hover { text-decoration-thickness: .12em; }
+    :focus-visible { outline: 3px solid var(--accent); outline-offset: 5px; }
+    ::selection { background: var(--accent); color: var(--accent-ink); }
+    h1, h2, h3, h4, h5, h6 { font-family: var(--display); line-height: 1.15; text-wrap: balance; }
+    p, h1, h2, h3 { margin-top: 0; }
+    img, svg { max-width: 100%; vertical-align: middle; }
+    .c441738 { width: min(1180px, calc(100% - 3rem)); margin-inline: auto; }
+    .c111249 { position: absolute; z-index: 5; top: .5rem; left: 1rem; padding: .7rem 1rem; background: var(--surface); transform: translateY(-180%); border-radius: var(--radius); }
+    .c111249:focus { transform: translateY(0); }
+    .c7970b6 { border-bottom: 1px solid color-mix(in srgb,var(--text) 10%,transparent); }
+    .c25da72 { min-height: 88px; display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; }
+    .c4bb1d9 { display: inline-flex; align-items: center; gap: .7rem; color: var(--text); font: 650 1.12rem/1.2 var(--display); text-decoration: none; }
+    .c1c1a43 { display: grid; place-items: center; width: 2.4rem; height: 2.4rem; border-radius: calc(var(--radius) * .6); background: var(--accent); color: var(--accent-ink); }
+    .c641706 { width: 1.2rem; height: 1.2rem; fill: none; stroke: var(--accent-ink); stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; flex: 0 0 auto; }
+    .c4197e4 { display: flex; align-items: center; gap: 1.8rem; }
+    .c4197e4 > a { font-size: .88rem; font-weight: 600; text-decoration: none; }
+    .c4197e4 > a:not(.c58377d) { color: var(--muted); }
+    .c58377d { display: inline-flex; align-items: center; justify-content: center; gap: .8rem; min-height: 52px; padding: .85rem 1.4rem; border: 1px solid color-mix(in srgb,var(--accent-ink) 12%,transparent); border-radius: var(--radius); background: linear-gradient(135deg,var(--accent),color-mix(in srgb,var(--accent) 88%,var(--text))); color: var(--accent-ink); font: 650 .95rem/1.3 var(--body); text-decoration: none; box-shadow: 0 6px 18px color-mix(in srgb,var(--accent) 17%,transparent); transition: transform .18s ease, box-shadow .18s ease; }
+    .c58377d:hover { transform: translateY(-2px); box-shadow: 0 9px 24px color-mix(in srgb,var(--accent) 25%,transparent); }
+    .c25da72 .c58377d { min-height: 42px; padding: .65rem 1rem; }
+    .c353104 { padding-block: 1rem 0; color: var(--muted); font-size: .8rem; overflow-wrap: anywhere; }
+    .cbcd68a { color: var(--muted); }
+    .cbcd68a a, a.cbcd68a { color: var(--muted); text-decoration: none; }
+    .cbcd68a a:hover, a.cbcd68a:hover { color: var(--accent); text-decoration: underline; }
+    .cbcd68a ol, .cbcd68a ul { display: flex; flex-wrap: wrap; gap: .5rem 1rem; padding: 0; margin: 0; list-style: none; }
+    .c106a29 { display: grid; grid-template-columns: minmax(0,1.05fr) minmax(0,1fr); gap: clamp(2rem,5vw,4.5rem); align-items: start; padding-block: 1.5rem 3rem; }
+    .c5ac910 { display: inline-flex; align-items: center; gap: .55rem; margin-bottom: 1.3rem; color: var(--accent); font-size: .86rem; font-weight: 600; }
+    .c5ac910::before { content: ""; width: .5rem; height: .5rem; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 5px color-mix(in srgb,var(--accent) 9%,transparent); }
+    h1 { margin-bottom: 1.4rem; font-size: clamp(2.5rem,4.7vw,4.35rem); font-weight: 600; letter-spacing: -.055em; overflow-wrap: anywhere; }
+    h1 em { color: var(--accent); font-style: normal; }
+    .c120046 { max-width: 48ch; margin-bottom: 2rem; color: var(--muted); font-size: 1.08rem; line-height: 1.8; }
+    .cf905f4 { position: relative; min-width: 0; padding: clamp(1.1rem,2.4vw,1.5rem); border: 1px solid color-mix(in srgb,var(--accent) 20%,var(--surface)); border-radius: calc(var(--radius) * 1.6); background: linear-gradient(155deg,color-mix(in srgb,var(--accent) 7%,var(--surface)),var(--surface) 40%); box-shadow: 0 24px 64px color-mix(in srgb,var(--text) 9%,transparent),0 4px 12px color-mix(in srgb,var(--accent) 6%,transparent); }
+    .c09cc00 { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .7rem; margin-bottom: 1rem; }
+    .c09cc00 h2 { margin: 0; font-size: 1.35rem; letter-spacing: -.035em; }
+    .cfe2d1f { display: inline-flex; align-items: center; gap: .4rem; padding: .3rem .65rem; border: 1px solid color-mix(in srgb,var(--accent) 16%,transparent); border-radius: 999px; background: color-mix(in srgb,var(--accent) 8%,var(--surface)); color: var(--accent); font-size: .72rem; font-weight: 600; }
+    .cfe2d1f::before { content: ""; width: .35rem; height: .35rem; border-radius: 50%; background: var(--accent); }
+    .route { display: grid; grid-template-columns: minmax(0,1fr) auto minmax(0,1fr); align-items: center; gap: .8rem; padding: .8rem; margin-bottom: 1rem; border: 1px solid color-mix(in srgb,var(--text) 9%,transparent); border-radius: var(--radius); background: var(--surface); }
+    .endpoint { min-width: 0; display: flex; flex-direction: column; align-items: flex-start; gap: .45rem; }
+    .endpoint:last-child { align-items: flex-end; }
+    .endpoint-label, .c5e8621 { color: var(--muted); font-size: .78rem; font-weight: 500; }
+    .logo { display: flex; align-items: center; min-height: 36px; max-width: 100%; overflow-wrap: anywhere; font: 600 1rem/1.3 var(--display); }
+    .logo img, .logo svg { max-height: 36px; width: auto; max-width: 100%; object-fit: contain; }
+    .route-arrow { display: grid; place-items: center; width: 2.25rem; height: 2.25rem; border-radius: 50%; background: color-mix(in srgb,var(--accent) 9%,var(--surface)); }
+    .route-arrow .c641706 { stroke: var(--accent); }
+    .c5e8621 { display: block; margin-bottom: .5rem; color: var(--text); }
+    .amount-field { display: flex; align-items: center; gap: .75rem; padding: .8rem 1rem; border: 1px solid color-mix(in srgb,var(--text) 18%,transparent); border-radius: var(--radius); background: var(--bg); transition: border-color .18s ease; }
+    .amount-field:focus-within { border-color: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb,var(--accent) 12%,transparent); }
+    .amount-field input { width: 100%; min-width: 0; padding: .2rem 0; border: 0; background: var(--bg); color: var(--text); font: 550 1.6rem/1.2 var(--display); font-variant-numeric: tabular-nums; }
+    .amount-field input:focus { outline: 0; }
+    .unit { color: var(--muted); font-size: .8rem; }
+    .ce7db9e { margin: .45rem 0 .85rem; color: var(--muted); font-size: .74rem; }
+    .field-error { margin: .5rem 0; color: var(--text); font-size: .8rem; font-weight: 600; }
+    [hidden] { display: none !important; }
+    .estimate { padding: 1rem; border-radius: var(--radius); background: linear-gradient(120deg,color-mix(in srgb,var(--accent) 12%,var(--surface)),color-mix(in srgb,var(--accent) 4%,var(--surface))); }
+    .estimate-label { margin-bottom: .25rem; color: var(--muted); font-size: .8rem; }
+    .estimate-value { display: block; color: var(--text); font: 600 clamp(1.7rem,3vw,2.5rem)/1.3 var(--display); letter-spacing: -.04em; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+    .estimate-value small { color: var(--muted); font: 400 .8rem/1.4 var(--body); letter-spacing: 0; }
+    .estimate dl { display: grid; gap: .5rem; margin: .8rem 0 0; padding-top: .8rem; border-top: 1px solid color-mix(in srgb,var(--accent) 15%,transparent); font-size: .8rem; }
+    .estimate dl div { display: flex; flex-wrap: wrap; justify-content: space-between; gap: .25rem 1rem; }
+    .estimate dt { color: var(--muted); }
+    .estimate dd { margin: 0; font-weight: 600; font-variant-numeric: tabular-nums; }
+    .method { margin-block: .7rem; color: var(--muted); font-size: .75rem; }
+    .method summary { width: fit-content; color: var(--text); cursor: pointer; }
+    .method p { margin: .65rem 0 0; }
+    .cf905f4 > .c58377d { width: 100%; }
+    .c67513c { padding: .8rem 1rem; border: 1px solid color-mix(in srgb,var(--text) 10%,transparent); border-radius: var(--radius); background: var(--surface); }
+    .c9dcc14 { margin-bottom: .45rem; }
+    .c03dfc2 { display: flex; align-items: center; gap: .75rem; }
+    .c71cbf9 { flex: 1; min-width: 0; padding: 0; border: 0; background: transparent; color: var(--text); font: 550 1.55rem/1.2 var(--display); font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+    .c71cbf9:focus { outline: 0; }
+    .c4fbc88 { position: relative; display: inline-flex; align-items: center; gap: .5rem; flex: none; padding: .4rem 1.5rem .4rem .5rem; border: 1px solid color-mix(in srgb,var(--text) 13%,transparent); border-radius: 999px; background: var(--bg); }
+    .ce4bdd1 { width: 22px; height: 22px; border-radius: 50%; object-fit: contain; flex: none; }
+    .c12a7e4 { border: 0; background: transparent; color: var(--text); font: 600 .95rem/1 var(--body); cursor: pointer; appearance: none; -webkit-appearance: none; }
+    .c12a7e4:focus { outline: 0; }
+    .c4fbc88::after { content: ""; position: absolute; right: .7rem; width: .42rem; height: .42rem; border-right: 2px solid var(--muted); border-bottom: 2px solid var(--muted); transform: translateY(-2px) rotate(45deg); pointer-events: none; }
+    .ca37dd9 { margin-top: .4rem; color: var(--muted); font-size: .78rem; font-variant-numeric: tabular-nums; }
+    .c1d049b { position: relative; z-index: 1; display: grid; place-items: center; width: 2.4rem; height: 2.4rem; margin: -.55rem auto; padding: 0; border: 3px solid var(--surface); border-radius: 50%; background: color-mix(in srgb,var(--accent) 13%,var(--surface)); color: var(--accent); cursor: pointer; transition: transform .2s ease, background .2s ease; }
+    .c1d049b svg { width: 1.1rem; height: 1.1rem; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .c1d049b:hover { transform: rotate(180deg); background: color-mix(in srgb,var(--accent) 20%,var(--surface)); }
+    .c969e2e { display: grid; gap: .5rem; margin: 1rem 0 0; padding-top: .9rem; border-top: 1px solid color-mix(in srgb,var(--accent) 15%,transparent); font-size: .82rem; }
+    .c969e2e div { display: flex; flex-wrap: wrap; justify-content: space-between; gap: .2rem 1rem; }
+    .c969e2e dt { color: var(--muted); }
+    .c969e2e dd { margin: 0; font-weight: 600; font-variant-numeric: tabular-nums; }
+    .c25fe71 > .c58377d { width: 100%; margin-top: 1.05rem; }
+    .c0ebd47 { padding: 2rem; border: 1px solid color-mix(in srgb,var(--text) 10%,transparent); border-radius: calc(var(--radius) * 1.3); background: var(--surface); }
+    .c599b2f { margin-bottom: 1.3rem; font-size: 1.65rem; font-weight: 550; letter-spacing: -.035em; }
+    .c1c04bd { max-width: 100%; overflow-x: auto; }
+    .c5cb9e3 { width: 100%; border-collapse: collapse; text-align: left; font-size: .92rem; }
+    .c5cb9e3 caption { padding-bottom: 1rem; text-align: left; color: var(--muted); }
+    .c5cb9e3 th, .c5cb9e3 td { padding: 1rem 1.1rem; border-bottom: 1px solid color-mix(in srgb,var(--text) 9%,transparent); vertical-align: top; overflow-wrap: anywhere; }
+    .c5cb9e3 th { color: var(--muted); font-weight: 500; }
+    .c5cb9e3 thead { background: color-mix(in srgb,var(--accent) 5%,var(--surface)); }
+    .c5cb9e3 tbody tr:last-child > * { border-bottom: 0; }
+    .c6d2201 { max-width: 820px; padding-block: 4rem 2rem; }
+    .c26a3b9 { margin-bottom: 3.3rem; }
+    .c2321c5 { margin: 0 0 1.1rem; font: 550 clamp(1.6rem,3vw,2.2rem)/1.2 var(--display); letter-spacing: -.035em; }
+    .c6c2b4b { color: var(--muted); line-height: 1.85; overflow-wrap: anywhere; }
+    .c6c2b4b p { margin-bottom: 1.2rem; }
+    .c6c2b4b strong, .c6c2b4b h3, .c6c2b4b h4 { color: var(--text); }
+    .c6c2b4b ul, .c6c2b4b ol { padding-left: 1.3rem; }
+    .c6c2b4b li { padding-left: .3rem; margin-block: .55rem; }
+    .c6c2b4b li::marker { color: var(--accent); }
+    .c6c2b4b blockquote { margin: 1.5rem 0; padding: 1rem 1.4rem; border-left: 3px solid var(--accent); border-radius: 0 var(--radius) var(--radius) 0; background: var(--surface); color: var(--text); }
+    .c6c2b4b img { height: auto; border-radius: var(--radius); }
+    .c6c2b4b pre { overflow-x: auto; padding: 1rem; border-radius: var(--radius); background: var(--surface); }
+    .c6c2b4b code, .c6c2b4b pre { font-family: var(--body); }
+    .c4ce600 { margin-block: .8rem; border: 1px solid color-mix(in srgb,var(--text) 11%,transparent); border-radius: var(--radius); background: var(--surface); overflow: hidden; }
+    .c230e1e { position: relative; padding: 1.3rem 3.5rem 1.3rem 1.4rem; list-style: none; cursor: pointer; color: var(--text); font: 550 1.04rem/1.5 var(--display); }
+    .c230e1e::-webkit-details-marker { display: none; }
+    .c230e1e::after { content: "+"; position: absolute; right: 1.4rem; top: 1.2rem; color: var(--accent); font-size: 1.3rem; }
+    details[open] > .c230e1e::after { content: "−"; }
+    .c4ce600[open] { border-color: color-mix(in srgb,var(--accent) 35%,var(--surface)); }
+    .c230e1e:focus-visible { outline-offset: -5px; }
+    .c71518d { padding: 0 1.4rem 1.4rem; color: var(--muted); overflow-wrap: anywhere; }
+    .c71518d > :last-child { margin-bottom: 0; }
+    .cdf8358 { max-width: 820px; padding-block: 1.5rem 3.5rem; border-top: 1px solid color-mix(in srgb,var(--text) 12%,transparent); }
+    .cdf8358 .c599b2f { font-size: 1.25rem; }
+    .cc77df5 { margin: 0; padding-left: 1.25rem; color: var(--muted); font-size: .88rem; }
+    .c54c63d { padding-block: .4rem; padding-left: .25rem; overflow-wrap: anywhere; }
+    .c54c63d a, a.c54c63d { color: var(--text); text-decoration-color: color-mix(in srgb,var(--accent) 45%,transparent); }
+    .c54c63d a:hover, a.c54c63d:hover { color: var(--accent); }
+    .c54bca3 { border-top: 1px solid color-mix(in srgb,var(--text) 10%,transparent); }
+    .c9c5cd6 { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; min-height: 96px; padding-block: 1.5rem; color: var(--muted); font-size: .8rem; }
+    .c9c5cd6 p { margin: 0; }
+    .c9c5cd6 a { color: var(--muted); }
+    @media (max-width: 850px) { .c106a29 { grid-template-columns: minmax(0,1fr); gap: 2.5rem; padding-block: 2.5rem 3.5rem; } .c46b379 { max-width: 650px; } .cf905f4 { width: 100%; max-width: 600px; justify-self: center; } h1 { font-size: clamp(2.5rem,7vw,4rem); } .c120046 { max-width: 60ch; } }
+    @media (max-width: 540px) { .c441738 { width: calc(100% - 2rem); } .c25da72 { min-height: 76px; gap: .7rem; } .c4bb1d9 { font-size: .95rem; gap: .45rem; } .c1c1a43 { width: 2rem; height: 2rem; } .c4197e4 { gap: .6rem; } .c4197e4 > a:not(.c58377d) { display: none; } .c25da72 .c58377d { padding-inline: .85rem; font-size: .8rem; } .c0ebd47 { padding: 1.25rem; } .c5cb9e3 th, .c5cb9e3 td { padding: .8rem .55rem; } .c46b379 > .c58377d { width: 100%; } .c6d2201 { padding-top: 2.8rem; } .c9c5cd6 { align-items: flex-start; flex-direction: column; } }
+    @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .c58377d, .amount-field { transition: none; } .c58377d:hover { transform: none; } }
+  </style>
 </head>
 <body>
-<a class="c111249" href="#guide-main">Skip to guide</a>
-<header class="cb43920">
-  <div class="c441738 cc76084">
-    <div class="c4d198e">
-      <span class="c6a7f26" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 5.5h6a3 3 0 0 1 2 1 3 3 0 0 1 2-1h6v14h-6a3 3 0 0 0-2 1 3 3 0 0 0-2-1H4zM12 6.5v14M7 9h2M15 9h2M7 12h2M15 12h2"/></svg></span>
-      <span>The guide</span>
-    </div>
-    <a class="c928ec9" href="dashboard/">Open app <span class="c86dea4" aria-hidden="true">↗</span></a>
-  </div>
-</header>
-<section class="c106a29" aria-labelledby="guide-title">
-  <div class="c441738 cfd9d10">
-    <nav class="c353104" aria-label="Breadcrumb"><nav class="cbcd68a" aria-label="Breadcrumb"><a href="dashboard/">Home</a> <span>/</span> <span>Chains</span> <span>/</span> <span>AI Agent Crypto</span></nav></nav>
-    <div class="c97cec6">
-      <div class="c46b379">
-        <div class="cbaecd3"><span class="cd1c67a">A closer look</span><span class="ce6df1a"></span></div>
-        <h1 id="guide-title">AI Agent <em>Crypto</em>.</h1>
-        <p class="cadbf20">AI Agent Crypto describes a growing class of software that pairs a reasoning model with a blockchain wallet, letting the resulting agent observe on-chain conditions and act on them directly — placing trades, rebalancing a DeFi position, or executing a scheduled task — without a person approving each step. The agent still signs every transaction with its own keys, so what it can touch is bounded by the permissions, contracts, and funds it has been given, not by anything the model decides on its own.</p>
-        <a class="c0ce59c" href="dashboard/">Open app <span class="c86dea4" aria-hidden="true">↗</span></a>
+  <a class="c111249" href="#content">Skip to content</a>
+  <header class="c7970b6">
+    <nav class="c25da72 c441738" aria-label="Primary navigation">
+      <a class="c4bb1d9" href="#top" aria-label="Swap station, top of page">
+        <span class="c1c1a43" aria-hidden="true"><svg class="c641706" viewBox="0 0 24 24"><path d="M4 8h15m-4-4 4 4-4 4M20 16H5m4-4-4 4 4 4"/></svg></span>
+        Swap station
+      </a>
+      <div class="c4197e4">
+        <a href="#facts">Key facts</a>
+        <a href="#sources">Sources</a>
+        <a class="c58377d" href="dashboard/">Open app</a>
       </div>
-      <aside class="c9c9ed8" id="key-facts" aria-labelledby="aside-title">
-        <div class="c0de3af">
-          <h2 id="aside-title">At a glance</h2>
-          <span class="ca23d4f">Chains</span>
+    </nav>
+  </header>
+  <div class="c441738" id="top">
+    <div class="c353104"><nav class="cbcd68a" aria-label="Breadcrumb"><a href="dashboard/">Home</a> <span>/</span> <span>Chains</span> <span>/</span> <span>AI Agent Crypto</span></nav></div>
+    <section class="c106a29" aria-labelledby="hero-title">
+      <div class="c46b379">
+        <p class="c5ac910">All swap routes</p>
+        <h1 id="hero-title">AI Agent <em>Crypto</em>.</h1>
+        <p class="c120046">AI Agent Crypto describes a growing class of software that pairs a reasoning model with a blockchain wallet, letting the resulting agent observe on-chain conditions and act on them directly — placing trades, rebalancing a DeFi position, or executing a scheduled task — without a person approving each step.</p>
+        <a class="c58377d" href="dashboard/">Open app <svg class="c641706" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></a>
+      </div>
+      <aside class="cf905f4 c25fe71" aria-labelledby="widget-title">
+        <div class="c09cc00">
+          <h2 id="widget-title">Swap</h2>
+          <span class="cfe2d1f">Best route</span>
         </div>
-        <div class="c3027e9"><table class="c5cb9e3"><tbody><tr><th scope="row">Core components</th><td>Reasoning model + wallet + on-chain data feed</td></tr>
+        <div class="c67513c">
+          <div class="c9dcc14"><span class="c5e8621">You pay</span></div>
+          <div class="c03dfc2">
+            <input id="pay-amount" class="c71cbf9" type="number" inputmode="decimal" min="0" max="1000000000" step="any" value="1" aria-label="Amount you pay">
+            <span class="c4fbc88">
+              <img class="ce4bdd1" id="pay-ico" width="22" height="22" alt="" src="assets/tokens/eth.svg">
+              <select id="pay-token" class="c12a7e4" aria-label="Token you pay"></select>
+            </span>
+          </div>
+          <div class="ca37dd9" id="pay-usd">—</div>
+        </div>
+        <button type="button" class="c1d049b" id="swap-switch" aria-label="Switch the two tokens">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4v13m0 0-3-3m3 3 3-3M17 20V7m0 0-3 3m3-3 3 3"/></svg>
+        </button>
+        <div class="c67513c">
+          <div class="c9dcc14"><span class="c5e8621">You receive</span></div>
+          <div class="c03dfc2">
+            <output id="get-amount" class="c71cbf9" for="pay-amount">—</output>
+            <span class="c4fbc88">
+              <img class="ce4bdd1" id="get-ico" width="22" height="22" alt="" src="assets/tokens/usdt.svg">
+              <select id="get-token" class="c12a7e4" aria-label="Token you receive"></select>
+            </span>
+          </div>
+          <div class="ca37dd9" id="get-usd">—</div>
+        </div>
+        <dl class="c969e2e">
+          <div><dt>Rate</dt><dd id="swap-rate">—</dd></div>
+          <div><dt>Network fee</dt><dd id="swap-fee">0.3%</dd></div>
+        </dl>
+        <noscript><p class="ce7db9e">Enable JavaScript to estimate the swap.</p></noscript>
+        <a class="c58377d" href="dashboard/">Swap <svg class="c641706" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></a>
+      </aside>
+    </section>
+    <section class="c0ebd47" id="facts" aria-labelledby="facts-title">
+      <h2 class="c599b2f" id="facts-title">Key facts</h2>
+      <div class="c1c04bd"><table class="c5cb9e3"><tbody><tr><th scope="row">Core components</th><td>Reasoning model + wallet + on-chain data feed</td></tr>
 <tr><th scope="row">Execution method</th><td>Signed transactions via smart contracts</td></tr>
 <tr><th scope="row">Common custody</th><td>Session keys or delegated signers</td></tr>
 <tr><th scope="row">Primary use cases</th><td>Trading, DeFi management, scheduled tasks</td></tr>
 <tr><th scope="row">Main risk category</th><td>Key exposure and prompt-driven exploits</td></tr>
 <tr><th scope="row">Visible on-chain</th><td>Wallet and contract activity via block explorers</td></tr></tbody></table></div>
-        <a class="c0ce59c c21137d" href="dashboard/">Open app <span class="c86dea4" aria-hidden="true">↗</span></a>
-      </aside>
-    </div>
+    </section>
   </div>
-</section>
-<div class="c441738">
-  <div class="c93b9fd">
-    <nav class="c8ad72d" aria-labelledby="toc-title">
-      <h2 class="cf2c9d6" id="toc-title">On this page</h2>
-      <ul class="c497ac5" id="toc-list">
-        <li><a class="c01ad8e" href="#guide-sections" data-sections-link>In depth</a></li>
-        <li><a class="c01ad8e" href="#questions">Questions &amp; answers</a></li>
-        <li><a class="c01ad8e" href="#sources">Sources</a></li>
-      </ul>
-      <p class="c7bf144">Read from the beginning, or jump to the details you need.</p>
-    </nav>
-    <main class="c5d57e2" id="guide-main" tabindex="-1">
-      <div class="c5a9774" id="guide-sections"><section class="c26a3b9"><h2 class="c2321c5">What Is AI Agent Crypto</h2><div class="c6c2b4b"><strong>AI Agent Crypto refers to autonomous software agents that combine an AI reasoning layer with a crypto wallet, allowing the agent to read blockchain state and sign transactions on its own within a set of granted permissions.</strong> Unlike a chatbot that only answers questions, an on-chain agent is given a wallet address, a balance, and a goal, then left to monitor conditions and act — swapping a token when a price target is hit, moving liquidity between pools, or paying for a recurring service. The underlying reasoning techniques draw on decades of work in <a href="https://en.wikipedia.org/wiki/Artificial_intelligence" rel="nofollow noopener" target="_blank">artificial intelligence</a> research, applied here to a domain where every decision ends in an irreversible, publicly visible transaction.</div></section>
+  <main class="c6d2201 c441738" id="content">
+    <section class="c26a3b9"><h2 class="c2321c5">What Is AI Agent Crypto</h2><div class="c6c2b4b"><strong>AI Agent Crypto refers to autonomous software agents that combine an AI reasoning layer with a crypto wallet, allowing the agent to read blockchain state and sign transactions on its own within a set of granted permissions.</strong> Unlike a chatbot that only answers questions, an on-chain agent is given a wallet address, a balance, and a goal, then left to monitor conditions and act — swapping a token when a price target is hit, moving liquidity between pools, or paying for a recurring service. The underlying reasoning techniques draw on decades of work in <a href="https://en.wikipedia.org/wiki/Artificial_intelligence" rel="nofollow noopener" target="_blank">artificial intelligence</a> research, applied here to a domain where every decision ends in an irreversible, publicly visible transaction.</div></section>
 <section class="c26a3b9"><h2 class="c2321c5">How Autonomous Agents Operate On-Chain</h2><div class="c6c2b4b">Every agent runs the same basic loop: gather information, decide, act, and record the outcome. What differs between projects is how tightly that loop is scoped and how much a human reviews before funds move.<h3>The perception-decision loop</h3>An agent typically polls price feeds, contract events, or off-chain signals on a fixed interval, feeds that context into its reasoning model along with its stated goal, and produces a plan — which asset to move, how much, and through which contract. The plan is only useful if it can be executed, so the loop ends by handing a draft transaction to the wallet layer.<h3>Agent frameworks and runtimes</h3>A handful of open frameworks have emerged to standardize this loop, giving a model a consistent set of wallet and chain tools instead of a one-off integration. <a href="https://docs.ai16z.ai/" rel="nofollow noopener" target="_blank">One widely referenced framework</a> packages memory, personality, and on-chain actions into a single runtime so a developer can point an agent at a new chain without rebuilding its decision logic from scratch.<h3>Executing on-chain actions</h3>Once a plan is approved, the agent builds a transaction against a target contract and submits it exactly the way a human wallet would, following the same standards laid out in Ethereum's <a href="https://ethereum.org/en/developers/docs/" rel="nofollow noopener" target="_blank">developer docs</a>. Nothing about the execution step is special-cased for AI — the chain has no way to know whether a model or a person clicked sign.</div></section>
 <section class="c26a3b9"><h2 class="c2321c5">Wallets and Smart Contracts Behind AI Agent Crypto</h2><div class="c6c2b4b">An agent's capabilities are only as broad as the keys and contract permissions it holds, which is why most serious AI Agent Crypto deployments spend more design effort on custody than on the model itself.<h3>Delegated signers and session keys</h3>Rather than handing an agent a master private key, many setups issue a session key scoped to a specific contract, spending limit, and expiry window. If the agent is compromised or misbehaves, the exposure is capped at that session's limits, and the activity remains traceable on a public ledger such as <a href="https://etherscan.io/" rel="nofollow noopener" target="_blank">Etherscan</a>.<h3>Smart contract permission scopes</h3>Separately, the contracts an agent is allowed to call can restrict which functions it may invoke — a lending-protocol agent might be approved only to supply and withdraw collateral, never to change risk parameters. Narrow scopes are the main defense against an agent taking an action nobody intended, whether that mistake comes from the model or from manipulated input.</div></section>
 <section class="c26a3b9"><h2 class="c2321c5">Popular AI Agent Crypto Use Cases</h2><div class="c6c2b4b">Most live deployments cluster around a small set of repeatable jobs where a rules-based bot once sufficed but a reasoning agent now adapts better to changing conditions.<ul><li>Market-making and trading agents that adjust orders based on volatility and liquidity depth.</li><li>DeFi position managers that rebalance collateral ratios or move funds between yield sources.</li><li>Treasury agents that pay recurring on-chain bills or stream payroll on a schedule.</li><li>Social and content agents that hold a wallet for tipping, airdrops, or community rewards.</li><li>Data and research agents that summarize on-chain activity and flag anomalies for a human.</li></ul></div></section>
 <section class="c26a3b9"><h2 class="c2321c5">Risks in AI Agent Crypto Systems</h2><div class="c6c2b4b">The same autonomy that makes an agent useful also removes the pause a human review would normally provide, so risk analysis for AI Agent Crypto tends to focus on two distinct failure modes.<h3>Key custody risk</h3>Any key an agent can use, a thief can use if they reach it first. Keys stored on a server, in a plaintext config, or inside a prompt history are the most common point of failure, which is why scoped session keys and hardware-backed signing are treated as baseline practice rather than an optional upgrade.<h3>Prompt and economic exploits</h3>Because an agent's decisions come from a model reading text, attackers have tried feeding it manipulated on-chain data or crafted messages designed to steer its next action — a prompt-injection style attack repurposed for finance. Economic exploits follow the same logic as any DeFi attack: if an agent's trading or liquidity logic is predictable, someone can set up a trade that profits from exactly how it will react.</div></section>
 <section class="c26a3b9"><h2 class="c2321c5">The Agent-Token Trend</h2><div class="c6c2b4b">A parallel trend has agents issuing or trading their own tokens, sometimes to fund their operating wallet and sometimes as a speculative wrapper around the agent's brand. Token activity, liquidity, and holder counts for these projects are generally trackable through aggregators such as <a href="https://defillama.com/" rel="nofollow noopener" target="_blank">DefiLlama</a>, which makes it straightforward to separate an agent with real on-chain usage from one that exists mainly as a token with a chatbot attached. Treat the token and the agent's actual wallet activity as two separate things to evaluate — a rising token price says nothing about whether the underlying agent is executing sound on-chain decisions.</div></section>
-<section class="c26a3b9"><h2 class="c2321c5">Choosing an AI Agent Crypto Platform</h2><div class="c6c2b4b">Platforms differ mainly in how much custody control, contract scoping, and transparency they give you over what the agent is allowed to do. The table below lines up the dimensions worth comparing before granting any agent a wallet. Platforms that document their permission model clearly, and that let you verify an agent's past actions through a standard explorer, give you something to check against rather than a promise to trust. Reviewing a contract's functions directly, as explained in Ethereum's <a href="https://ethereum.org/en/developers/docs/smart-contracts/" rel="nofollow noopener" target="_blank">smart contract documentation</a>, is a reasonable step before letting any agent interact with it on your behalf.<table><thead><tr><th>Dimension</th><th>Lower-risk setup</th><th>Higher-risk setup</th></tr></thead><tbody><tr><td>Key custody</td><td>Scoped session key, expiring</td><td>Full wallet key held by the agent</td></tr><tr><td>Contract scope</td><td>Whitelisted functions only</td><td>Unrestricted contract calls</td></tr><tr><td>Visibility</td><td>On-chain logs reviewable anytime</td><td>Opaque off-chain execution</td></tr></tbody></table></div></section></div>
-      <section class="c1faf9c" id="questions" aria-labelledby="questions-title">
-        <h2 class="c2321c5" id="questions-title">Questions &amp; answers</h2>
-        <details class="c4ce600"><summary class="c230e1e">What does AI Agent Crypto actually mean?</summary><div class="c71518d">It describes software agents that pair an AI reasoning model with a blockchain wallet, so the agent can read on-chain data and sign transactions itself, within whatever permissions and funds it has been granted.</div></details>
+<section class="c26a3b9"><h2 class="c2321c5">Choosing an AI Agent Crypto Platform</h2><div class="c6c2b4b">Platforms differ mainly in how much custody control, contract scoping, and transparency they give you over what the agent is allowed to do. The table below lines up the dimensions worth comparing before granting any agent a wallet. Platforms that document their permission model clearly, and that let you verify an agent's past actions through a standard explorer, give you something to check against rather than a promise to trust. Reviewing a contract's functions directly, as explained in Ethereum's <a href="https://ethereum.org/en/developers/docs/smart-contracts/" rel="nofollow noopener" target="_blank">smart contract documentation</a>, is a reasonable step before letting any agent interact with it on your behalf.<table><thead><tr><th>Dimension</th><th>Lower-risk setup</th><th>Higher-risk setup</th></tr></thead><tbody><tr><td>Key custody</td><td>Scoped session key, expiring</td><td>Full wallet key held by the agent</td></tr><tr><td>Contract scope</td><td>Whitelisted functions only</td><td>Unrestricted contract calls</td></tr><tr><td>Visibility</td><td>On-chain logs reviewable anytime</td><td>Opaque off-chain execution</td></tr></tbody></table></div></section>
+    <details class="c4ce600"><summary class="c230e1e">What does AI Agent Crypto actually mean?</summary><div class="c71518d">It describes software agents that pair an AI reasoning model with a blockchain wallet, so the agent can read on-chain data and sign transactions itself, within whatever permissions and funds it has been granted.</div></details>
 <details class="c4ce600"><summary class="c230e1e">Can an AI agent hold its own crypto wallet?</summary><div class="c71518d">Yes. Most deployments give the agent a dedicated wallet or a scoped session key rather than full control of a person's main wallet, which limits how much it can move or affect if something goes wrong.</div></details>
 <details class="c4ce600"><summary class="c230e1e">What frameworks are used to build on-chain agents?</summary><div class="c71518d">Several open frameworks package memory, decision logic, and wallet or chain tools into a reusable runtime, letting a developer connect an agent to a new chain without rewriting its core reasoning loop each time.</div></details>
 <details class="c4ce600"><summary class="c230e1e">Are AI trading agents safe to fund?</summary><div class="c71518d">Safety depends on how tightly the agent's keys and contract permissions are scoped. A session key with a spending limit and a whitelist of allowed contract functions contains a failure far better than a wallet with unrestricted access.</div></details>
 <details class="c4ce600"><summary class="c230e1e">What is a prompt-based exploit against a crypto agent?</summary><div class="c71518d">It is an attempt to feed an agent manipulated data or crafted text so its reasoning model produces a harmful action, such as approving a bad trade or sending funds to the wrong address, without the agent's owner intending it.</div></details>
 <details class="c4ce600"><summary class="c230e1e">Why do some crypto agents have their own token?</summary><div class="c71518d">Some projects issue a token to fund the agent's operating costs or to build a community around it. Token price and agent usefulness are separate signals, and checking an aggregator for real wallet activity is more informative than the token chart alone.</div></details>
 <details class="c4ce600"><summary class="c230e1e">How do I check what a crypto agent has actually done?</summary><div class="c71518d">Because every action is a signed transaction, you can look up the agent's wallet address on a public block explorer and review its full transaction history, rather than relying on a dashboard the project controls.</div></details>
-      </section>
-    </main>
-  </div>
-</div>
-<section class="cd05912" id="sources" aria-labelledby="sources-title">
-  <div class="c441738 c4df3dd">
-    <div class="c3d091e"><h2 id="sources-title">Sources</h2><p>References for further reading.</p></div>
-    <div class="cc74405"><ul class="cc77df5"><li><a class="c54c63d" href="https://ethereum.org/en/developers/docs/" rel="nofollow noopener" target="_blank">Ethereum developer documentation</a></li>
+  </main>
+  <section class="cdf8358 c441738" id="sources" aria-labelledby="sources-title">
+    <h2 class="c599b2f" id="sources-title">Sources</h2>
+    <ul class="cc77df5"><li><a class="c54c63d" href="https://ethereum.org/en/developers/docs/" rel="nofollow noopener" target="_blank">Ethereum developer documentation</a></li>
 <li><a class="c54c63d" href="https://en.wikipedia.org/wiki/Artificial_intelligence" rel="nofollow noopener" target="_blank">Artificial intelligence — Wikipedia</a></li>
 <li><a class="c54c63d" href="https://defillama.com/" rel="nofollow noopener" target="_blank">DefiLlama</a></li>
-<li><a class="c54c63d" href="https://etherscan.io/" rel="nofollow noopener" target="_blank">Etherscan</a></li></ul></div>
-  </div>
-</section>
-<footer class="c54bca3">
-  <div class="c441738 c9c5cd6">
-    <span class="c87fa40">The guide</span>
-    <p class="cdaab44">Last updated <span>Updated Oct 11, 2026</span></p>
-  </div>
-</footer>
-<script>
-(() => {
-  const toc = document.getElementById('toc-list');
-  const sections = Array.from(document.querySelectorAll('#guide-sections .c26a3b9'));
-  const fallback = toc.querySelector('[data-sections-link]');
-  const fragment = document.createDocumentFragment();
-  sections.forEach((section, index) => {
-    if (!section.id) {
-      const base = `guide-section-${index + 1}`;
-      let id = base;
-      let suffix = 1;
-      while (document.getElementById(id)) id = `${base}-${suffix++}`;
-      section.id = id;
-    }
-    const heading = section.querySelector('.c2321c5, h2, h3');
-    const item = document.createElement('li');
-    const link = document.createElement('a');
-    link.className = 'toc-link';
-    link.href = `#${encodeURIComponent(section.id)}`;
-    link.textContent = heading?.textContent.trim() || section.getAttribute('aria-label') || `Section ${index + 1}`;
-    item.append(link);
-    fragment.append(item);
-  });
-  if (sections.length) fallback.parentElement.replaceWith(fragment);
-  const entries = Array.from(toc.querySelectorAll('a[href^="#"]')).map(link => {
-    const target = document.getElementById(decodeURIComponent(link.hash.slice(1)));
-    return { link, target };
-  }).filter(entry => entry.target);
-  if (!entries.length) return;
-  let activeLink;
-  let pending = false;
-  const activate = entry => {
-    if (!entry || entry.link === activeLink) return;
-    if (activeLink) activeLink.removeAttribute('aria-current');
-    entry.link.setAttribute('aria-current', 'location');
-    activeLink = entry.link;
-  };
-  const update = () => {
-    pending = false;
-    const boundary = Math.min(180, window.innerHeight * .25);
-    let active = entries[0];
-    for (const entry of entries) {
-      if (entry.target.getBoundingClientRect().top <= boundary) active = entry;
-    }
-    const root = document.scrollingElement || document.documentElement;
-    if (root.scrollHeight > window.innerHeight && Math.ceil(window.scrollY + window.innerHeight) >= root.scrollHeight - 2) {
-      active = entries[entries.length - 1];
-    }
-    activate(active);
-  };
-  const schedule = () => {
-    if (pending) return;
-    pending = true;
-    window.requestAnimationFrame(update);
-  };
-  if ('IntersectionObserver' in window) {
-    const observer = new IntersectionObserver(schedule, {
-      rootMargin: '-12% 0px -60% 0px',
-      threshold: [0, .1, .5, 1]
-    });
-    entries.forEach(entry => observer.observe(entry.target));
-  }
-  toc.addEventListener('click', event => {
-    const link = event.target.closest('a');
-    if (!link || event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
-    const entry = entries.find(item => item.link === link);
-    if (!entry) return;
-    event.preventDefault();
-    const hadTabindex = entry.target.hasAttribute('tabindex');
-    if (!hadTabindex) {
-      entry.target.setAttribute('tabindex', '-1');
-      entry.target.addEventListener('blur', () => entry.target.removeAttribute('tabindex'), { once: true });
-    }
-    entry.target.focus({ preventScroll: true });
-    entry.target.scrollIntoView({
-      behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
-      block: 'start'
-    });
-    if (window.location.hash !== link.hash) {
-      try { window.history.pushState(null, '', link.hash); } catch {}
-    }
-    activate(entry);
-  });
-  window.addEventListener('scroll', schedule, { passive: true });
-  window.addEventListener('resize', schedule, { passive: true });
-  window.addEventListener('hashchange', schedule);
-  window.addEventListener('load', schedule, { once: true });
-  update();
-})();
-</script>
+<li><a class="c54c63d" href="https://etherscan.io/" rel="nofollow noopener" target="_blank">Etherscan</a></li></ul>
+  </section>
+  <footer class="c54bca3">
+    <div class="c9c5cd6 c441738">
+      <p>Updated Oct 11, 2026</p>
+      <a href="#top">Back to top ↑</a>
+    </div>
+  </footer>
+  <script>
+    (() => {
+      const TOKENS = [
+        { s: 'ETH', f: 'eth', p: 2550 }, { s: 'BTC', f: 'btc', p: 62000 },
+        { s: 'USDT', f: 'usdt', p: 1 }, { s: 'USDC', f: 'usdc', p: 1 },
+        { s: 'BNB', f: 'bnb', p: 585 }, { s: 'SOL', f: 'sol', p: 145 },
+        { s: 'ARB', f: 'arb', p: 0.62 }, { s: 'OP', f: 'optimism', p: 1.65 },
+        { s: 'MATIC', f: 'polygon', p: 0.42 }, { s: 'AVAX', f: 'avalanche', p: 27 },
+        { s: 'SUI', f: 'sui', p: 1.35 }, { s: 'LTC', f: 'ltc', p: 72 },
+        { s: 'TRX', f: 'trx', p: 0.16 }, { s: 'XMR', f: 'xmr', p: 155 },
+        { s: 'XRP', f: 'xrp', p: 0.52 }, { s: 'ZEC', f: 'zec', p: 32 }
+      ];
+      const FEE = 0.003;
+      const $ = (id) => document.getElementById(id);
+      const payAmt = $('pay-amount'), payTok = $('pay-token'), payUsd = $('pay-usd'), payIco = $('pay-ico');
+      const getAmt = $('get-amount'), getTok = $('get-token'), getUsd = $('get-usd'), getIco = $('get-ico');
+      const rateEl = $('swap-rate');
+      const tok = (s) => TOKENS.find((t) => t.s === s);
+      const num = (n) => new Intl.NumberFormat('en', { maximumFractionDigits: n >= 1 ? 4 : 6 }).format(n);
+      const usd = (v) => '~$' + new Intl.NumberFormat('en', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(v);
+      TOKENS.forEach((t) => {
+        [payTok, getTok].forEach((sel) => { const o = document.createElement('option'); o.value = t.s; o.textContent = t.s; sel.appendChild(o); });
+      });
+      payTok.value = 'ETH'; getTok.value = 'USDT';
+      const calc = () => {
+        const pf = tok(payTok.value), gt = tok(getTok.value);
+        payIco.src = 'assets/tokens/' + pf.f + '.svg'; payIco.alt = pf.s;
+        getIco.src = 'assets/tokens/' + gt.f + '.svg'; getIco.alt = gt.s;
+        rateEl.textContent = '1 ' + pf.s + ' ≈ ' + num(pf.p / gt.p) + ' ' + gt.s;
+        const a = parseFloat(payAmt.value);
+        if (!Number.isFinite(a) || a <= 0) { getAmt.textContent = '—'; payUsd.textContent = '—'; getUsd.textContent = '—'; return; }
+        const out = a * (pf.p / gt.p) * (1 - FEE);
+        getAmt.textContent = num(out) + ' ' + gt.s;
+        payUsd.textContent = usd(a * pf.p);
+        getUsd.textContent = usd(out * gt.p);
+      };
+      const distinct = (changed, other) => { if (changed.value === other.value) { other.value = (TOKENS.find((t) => t.s !== changed.value) || TOKENS[0]).s; } };
+      payAmt.addEventListener('input', calc);
+      payTok.addEventListener('change', () => { distinct(payTok, getTok); calc(); });
+      getTok.addEventListener('change', () => { distinct(getTok, payTok); calc(); });
+      $('swap-switch').addEventListener('click', () => { const t = payTok.value; payTok.value = getTok.value; getTok.value = t; calc(); });
+      calc();
+    })();
+  </script>
 </body>
 </html>
